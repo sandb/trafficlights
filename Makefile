@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-O2 -lcurl -ljson -ggdb
+CFLAGS=-O2 -lcurl -ljson-c -ggdb
 
 all: trafficlights
 
@@ -8,3 +8,5 @@ trafficlights: trafficlights.c
 
 clean:
 	rm -f *.o trafficlights
+
+.PHONY: all clean
