@@ -1,5 +1,6 @@
 CC=gcc
-CFLAGS=-O2 -lcurl -ljson -ggdb
+#CFLAGS=-O2 -lcurl -ljson -ggdb
+CFLAGS=-O2 -lcurl -ljson
 
 all: trafficlights
 
