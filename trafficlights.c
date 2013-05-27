@@ -207,6 +207,13 @@ int jenkins_color_to_led(const char* color)
 int jenkins_get_job_status(const char* jenkins_json, const char* jenkins_job) 
 {
 	json_object *jenkins_status = json_tokener_parse(jenkins_json);
+
+	if (jenkins_status == NULL)
+	{
+		fprintf(stderr, "Error: couldn't parse returned message from server as valid json\n");
+		return LED_BLINKING;
+	}
+
 	json_object *jobs = json_object_object_get(jenkins_status, "jobs");
 	size_t num_jobs = json_object_array_length(jobs);
 	int job_status = 0;
@@ -333,7 +340,11 @@ int main(const int argc, char** argv)
 			char *jenkins_status = jenkins_get_status(arguments.server);
 			if (jenkins_status == NULL) 
 			{
-				fprintf(stderr, "Could not retrieve jenkins status from [%s], retrying.\n", arguments.server);
+				if (status != LED_BLINKING)
+				{
+					fprintf(stderr, "Could not retrieve jenkins status from [%s], retrying.\n", arguments.server);
+				}
+				status = LED_BLINKING;
 				break;
 			}
 			status = jenkins_get_job_status(jenkins_status, arguments.job);
