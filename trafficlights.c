@@ -231,10 +231,12 @@ int jenkins_get_job_status(const char* jenkins_json, const char* jenkins_job)
 	return job_status;
 }
 
+/** argparse global variables */
 const char *argp_program_version = "trafficlights 1.0";
 const char *argp_program_bug_address = "<pieter.iserbyt@gmail.com>";
 static char doc[] = "trafficlights -- monitors a jenkins job and outputs the status on a trafficlight connected to the parallel port";
 
+/** argparse defention of commandline options */
 static struct argp_option options[] = 
 {
 	{"refreshrate",	'r',	"seconds",	0,	"After how many seconds do we update the status of a job" },
@@ -243,6 +245,7 @@ static struct argp_option options[] =
 	{ 0 }
 };
 
+/** struct that will receive commandline specified settings, passed to callback function */
 struct arguments 
 {
 	int rate;
@@ -250,6 +253,15 @@ struct arguments
 	char *server;
 };
 
+/** 
+ * parse_opt() - argparse callback function.
+ * 
+ * @key:	The commandline key of the commandline option being processed.
+ * @arg:	The specified argument value.
+ * @argp_state:	Pointer to argp_option struct that will be updated with specified values.
+ * 
+ * Callback function that handles command line options.
+ */
 static error_t parse_opt (int key, char *arg, struct argp_state *state) 
 {
 	struct arguments *args = state->input;
@@ -270,6 +282,7 @@ static error_t parse_opt (int key, char *arg, struct argp_state *state)
 	return 0;
 }
 
+/** argparse struct holding options, callback and documentation references. */
 static struct argp argp = { options, parse_opt, NULL, doc };
 
 int main(const int argc, char** argv) 
@@ -318,6 +331,11 @@ int main(const int argc, char** argv)
 		if (counter == 0) 
 		{
 			char *jenkins_status = jenkins_get_status(arguments.server);
+			if (jenkins_status == NULL) 
+			{
+				fprintf(stderr, "Could not retrieve jenkins status from [%s], retrying.\n", arguments.server);
+				break;
+			}
 			status = jenkins_get_job_status(jenkins_status, arguments.job);
 			free(jenkins_status);
 		}
