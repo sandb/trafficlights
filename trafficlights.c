@@ -194,6 +194,7 @@ int jenkins_color_to_led(const char* color)
 	if (str_starts_with(color, "red")) status = LED_RED;
 	if (str_starts_with(color, "disabled")) status = LED_OFF;
 	if (str_starts_with(color, "grey")) status = LED_GREEN | LED_ORANGE | LED_RED | LED_BLINKING;
+	if (str_starts_with(color, "aborted")) status = LED_OFF;
 	if (str_ends_with(color, "anime")) status |= LED_BLINKING;
 	return status;
 }
